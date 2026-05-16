@@ -41,3 +41,4 @@ function logout() {
     window.location.href = "login.html";
   });
 }
+const db = firebase.firestore();
