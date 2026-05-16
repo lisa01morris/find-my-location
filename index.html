@@ -3,6 +3,9 @@
 <head>
   <title>Find My Location</title>
 
+  <!-- Mobile Optimization -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 
@@ -12,18 +15,34 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+  <style>
+    /* Ensure map fills the screen */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
 </head>
 
 <body>
-<button id="savePlaceBtn" onclick="savePlace()">Save This Place</button>
+
+  <!-- Save Button -->
+  <button id="savePlaceBtn" onclick="savePlace()">Save This Place</button>
 
   <!-- Logout Button -->
   <button id="logoutBtn" onclick="logout()">Logout</button>
 
+  <!-- Map -->
   <div id="map"></div>
 
   <!-- ========================= -->
-  <!--  Map Logic (unchanged) -->
+  <!--  Map Logic -->
   <!-- ========================= -->
   <script>
     var map = L.map("map").setView([0, 0], 15);
@@ -32,69 +51,72 @@
       maxZoom: 19,
     }).addTo(map);
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
+    // Track last known location
+    let lastKnownLocation = null;
 
-          map.setView([lat, lng], 15);
+    function updateLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
 
-          L.marker([lat, lng])
-            .addTo(map)
-            .bindPopup("You are here")
-            .openPopup();
-        },
-        () => {
-          alert("Location access denied");
-        }
-      );
-    } else {
-      alert("Geolocation not supported");
+            lastKnownLocation = { lat, lng, timestamp: Date.now() };
+
+            map.setView([lat, lng], 15);
+
+            L.marker([lat, lng])
+              .addTo(map)
+              .bindPopup("You are here")
+              .openPopup();
+          },
+          () => {
+            alert("Location access denied");
+          }
+        );
+      } else {
+        alert("Geolocation not supported");
+      }
+    }
+
+    updateLocation();
+  </script>
+
+  <!-- ========================= -->
+  <!--  Save Place Logic -->
+  <!-- ========================= -->
+  <script>
+    function savePlace() {
+      if (!lastKnownLocation) {
+        alert("Location not ready yet. Try again.");
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        alert("You must be logged in.");
+        return;
+      }
+
+      db.collection("users")
+        .doc(user.uid)
+        .collection("saved_places")
+        .add(lastKnownLocation)
+        .then(() => {
+          alert("Location saved successfully!");
+        })
+        .catch((error) => {
+          alert("Error saving location: " + error.message);
+        });
     }
   </script>
-<script>
-  let lastKnownLocation = null;
-
-  navigator.geolocation.getCurrentPosition((position) => {
-    lastKnownLocation = {
-      lat: position.coords.latitude,
-      lng: position.coords.longitude,
-      timestamp: Date.now()
-    };
-  });
-
-  function savePlace() {
-    if (!lastKnownLocation) {
-      alert("Location not ready yet. Try again.");
-      return;
-    }
-
-    const user = auth.currentUser;
-    if (!user) {
-      alert("You must be logged in.");
-      return;
-    }
-
-    db.collection("users")
-      .doc(user.uid)
-      .collection("saved_places")
-      .add(lastKnownLocation)
-      .then(() => {
-        alert("Location saved successfully!");
-      })
-      .catch((error) => {
-        alert("Error saving location: " + error.message);
-      });
-  }
-</script>
 
   <!-- ========================= -->
   <!--  Firebase SDKs -->
   <!-- ========================= -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 
   <!-- ========================= -->
   <!--  Your firebase.js file -->
