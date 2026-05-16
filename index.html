@@ -1,114 +1,75 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Find My Location</title>
+<head>
+  <title>Find My Location</title>
 
-    <!-- Leaflet CSS -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet/dist/leaflet.css"
-    />
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
-    <style>
-      #map {
-        height: 100vh;
-        width: 100%;
-      }
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-      #logoutBtn {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 10px 15px;
-        background: black;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-size: 14px;
-        cursor: pointer;
-        z-index: 9999;
-      }
-    </style>
-  </head>
+</head>
 
-  <body>
+<body>
 
-    <!-- Logout Button -->
-    <button id="logoutBtn" onclick="logout()">Logout</button>
+  <!-- Logout Button -->
+  <button id="logoutBtn" onclick="logout()">Logout</button>
 
-    <div id="map"></div>
+  <div id="map"></div>
 
-    <script>
-      // Initialize map with a default center
-      var map = L.map("map").setView([0, 0], 15);
+  <!-- ========================= -->
+  <!--  Map Logic (unchanged) -->
+  <!-- ========================= -->
+  <script>
+    var map = L.map("map").setView([0, 0], 15);
 
-      // Add OpenStreetMap tiles (free, no API key needed)
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-      }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+    }).addTo(map);
 
-      // Try to get user's location
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
 
-            // Move map to user's location
-            map.setView([lat, lng], 15);
+          map.setView([lat, lng], 15);
 
-            // Add marker at user's location
-            L.marker([lat, lng])
-              .addTo(map)
-              .bindPopup("You are here")
-              .openPopup();
-          },
-          () => {
-            alert("Location access denied");
-          }
-        );
-      } else {
-        alert("Geolocation not supported");
-      }
-    </script>
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
-
-    <script>
-      // Your Firebase config
-      const firebaseConfig = {
-        apiKey: "AIzaSyA5v7-vP87dJ2mN9Y7hbBM29X2KK4W6Tr0",
-        authDomain: "xpert-forex-trade.firebaseapp.com",
-        databaseURL: "https://xpert-forex-trade-default-rtdb.firebaseio.com",
-        projectId: "xpert-forex-trade",
-        storageBucket: "xpert-forex-trade.firebasestorage.app",
-        messagingSenderId: "491439791457",
-        appId: "1:491439791457:web:5c30d0c48599b72634b920"
-      };
-
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-
-      // Protect page — redirect if not logged in
-      auth.onAuthStateChanged((user) => {
-        if (!user) {
-          window.location.href = "login.html";
+          L.marker([lat, lng])
+            .addTo(map)
+            .bindPopup("You are here")
+            .openPopup();
+        },
+        () => {
+          alert("Location access denied");
         }
-      });
+      );
+    } else {
+      alert("Geolocation not supported");
+    }
+  </script>
 
-      // Logout function
-      function logout() {
-        auth.signOut().then(() => {
-          window.location.href = "login.html";
-        });
-      }
-    </script>
+  <!-- ========================= -->
+  <!--  Firebase SDKs -->
+  <!-- ========================= -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
 
-  </body>
+  <!-- ========================= -->
+  <!--  Your firebase.js file -->
+  <!-- ========================= -->
+  <script src="firebase.js"></script>
+
+  <!-- ========================= -->
+  <!--  Protect the page -->
+  <!-- ========================= -->
+  <script>
+    protectPage();
+  </script>
+
+</body>
 </html>
