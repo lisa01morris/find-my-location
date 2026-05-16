@@ -42,7 +42,7 @@ body {
 }
 
 /* AUTH PAGES (login + register) */
-.auth-container {
+.box {
   width: 100%;
   max-width: 380px;
   margin: 80px auto;
@@ -53,7 +53,7 @@ body {
   box-shadow: 0 0 20px rgba(0,0,0,0.4);
 }
 
-.auth-container h2 {
+.box h2 {
   text-align: center;
   margin-bottom: 25px;
   font-size: 24px;
@@ -125,6 +125,8 @@ a:hover {
   margin-bottom: 15px;
   text-align: center;
 }
+
+/* SAVE PLACE BUTTON */
 #savePlaceBtn {
   position: fixed;
   bottom: 20px;
@@ -139,6 +141,7 @@ a:hover {
   z-index: 9999;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
+
 #savePlaceBtn:hover {
   opacity: 0.9;
 }
