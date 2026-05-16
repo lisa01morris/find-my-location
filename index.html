@@ -17,10 +17,28 @@
         height: 100vh;
         width: 100%;
       }
+
+      #logoutBtn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 15px;
+        background: black;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        z-index: 9999;
+      }
     </style>
   </head>
 
   <body>
+
+    <!-- Logout Button -->
+    <button id="logoutBtn" onclick="logout()">Logout</button>
+
     <div id="map"></div>
 
     <script>
@@ -56,5 +74,41 @@
         alert("Geolocation not supported");
       }
     </script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+
+    <script>
+      // Your Firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyA5v7-vP87dJ2mN9Y7hbBM29X2KK4W6Tr0",
+        authDomain: "xpert-forex-trade.firebaseapp.com",
+        databaseURL: "https://xpert-forex-trade-default-rtdb.firebaseio.com",
+        projectId: "xpert-forex-trade",
+        storageBucket: "xpert-forex-trade.firebasestorage.app",
+        messagingSenderId: "491439791457",
+        appId: "1:491439791457:web:5c30d0c48599b72634b920"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+
+      // Protect page — redirect if not logged in
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.href = "login.html";
+        }
+      });
+
+      // Logout function
+      function logout() {
+        auth.signOut().then(() => {
+          window.location.href = "login.html";
+        });
+      }
+    </script>
+
   </body>
 </html>
