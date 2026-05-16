@@ -125,3 +125,20 @@ a:hover {
   margin-bottom: 15px;
   text-align: center;
 }
+#savePlaceBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 18px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+#savePlaceBtn:hover {
+  opacity: 0.9;
+}
